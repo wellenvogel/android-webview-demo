@@ -62,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
                             InputStream is = con.getInputStream();
                             return new WebResourceResponse(null, null, is);
                         } catch (Exception e) {
-                            Log.e("HTPP", "unable to query " + queryUrl + ": " + e);
-                            return null;
+                            Log.e("HTTP", "unable to query " + queryUrl + ": " + e);
+                            return new WebResourceResponse(null,null,404,e.getLocalizedMessage(),null,null);
                         }
                     }
                     else{
@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent i=new Intent(this,StartActivity.class);
+        i.putExtra(Constants.FORCEPREF,true);
         startActivity(i);
         finish();
         return true;

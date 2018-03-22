@@ -1,6 +1,7 @@
 package de.wellenvogel.android.wvtest;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,27 +13,42 @@ import android.widget.EditText;
 
 public class StartActivity extends AppCompatActivity {
 
-
+    SharedPreferences mPref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final EditText url=(EditText)findViewById(R.id.editText);
+        final EditText url = (EditText) findViewById(R.id.editText);
 
-        Button bt=(Button)findViewById(R.id.btStart);
+        mPref = getSharedPreferences(Constants.PREFGROUP, MODE_PRIVATE);
+        String curUrl = mPref.getString(Constants.URLKEY, "");
+        if (!curUrl.isEmpty()) {
+            if (!getIntent().getBooleanExtra(Constants.FORCEPREF, false)) {
+                startMain(curUrl);
+            } else {
+                url.setText(curUrl);
+            }
+        }
+        Button bt = (Button)findViewById(R.id.btStart);
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i=new Intent(StartActivity.this,MainActivity.class);
-                Bundle b=new Bundle();
-                b.putString(Constants.URLKEY, String.valueOf(url.getText()));
-                i.putExtras(b);
-                startActivity(i);
-                finish();
+                String current=String.valueOf(url.getText());
+                if (current.isEmpty()) return;
+                mPref.edit().putString(Constants.URLKEY,current).apply();
+                startMain(current);
             }
         });
+    }
+    private void startMain(String url){
+        Intent i=new Intent(StartActivity.this,MainActivity.class);
+        Bundle b=new Bundle();
+        b.putString(Constants.URLKEY, String.valueOf(url));
+        i.putExtras(b);
+        startActivity(i);
+        finish();
     }
 
 }
