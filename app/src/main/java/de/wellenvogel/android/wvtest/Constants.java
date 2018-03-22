@@ -6,5 +6,6 @@ package de.wellenvogel.android.wvtest;
 
 public class Constants {
     public static final String URLKEY="url";
-    public static final String QUERYURL="http://query";
+    public static final String QUERYURL="query";
+    public static final String ASSETS="http://assets";
 }

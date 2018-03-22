@@ -18,7 +18,6 @@
         android:ems="10"
         android:hint="URL"
         android:inputType="text"
-        android:text="URL"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

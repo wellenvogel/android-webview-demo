@@ -1,9 +1,13 @@
 package de.wellenvogel.android.wvtest;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceResponse;
@@ -12,9 +16,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -30,19 +34,11 @@ public class MainActivity extends AppCompatActivity {
         if (b!=null){
             queryUrl =b.getString(Constants.URLKEY);
         }
-        getSupportActionBar().hide();
-        setContentView(R.layout.activity_main);
+        //getSupportActionBar().hide();
+        setContentView(R.layout.content_main);
 
         mWebView = (WebView) findViewById(R.id.webview);
         mWebView.getSettings().setJavaScriptEnabled(true);
-        if (Build.VERSION.SDK_INT >= 16){
-            try {
-                WebSettings settings = mWebView.getSettings();
-                Method m = WebSettings.class.getDeclaredMethod("setAllowUniversalAccessFromFileURLs", boolean.class);
-                m.setAccessible(true);
-                m.invoke(settings, true);
-            }catch (Exception e){}
-        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && BuildConfig.DEBUG) {
             try {
                 Method m=WebView.class.getDeclaredMethod("setWebContentsDebuggingEnabled",boolean.class);
@@ -57,15 +53,27 @@ public class MainActivity extends AppCompatActivity {
         mWebView.setWebViewClient(new WebViewClient(){
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-                if (url.startsWith(Constants.QUERYURL)){
-                    try {
-                        URL cu=new URL(queryUrl);
-                        URLConnection con=cu.openConnection();
-                        InputStream is=con.getInputStream();
-                        return new WebResourceResponse(null,null,is);
-                    } catch (Exception e) {
-                        Log.e("HTPP","unable to query "+queryUrl+": "+e);
-                        return null;
+                if (url.startsWith(Constants.ASSETS)) {
+                    String remain=url.substring(Constants.ASSETS.length()+1);
+                    if (remain.startsWith(Constants.QUERYURL)) {
+                        try {
+                            URL cu = new URL(queryUrl);
+                            URLConnection con = cu.openConnection();
+                            InputStream is = con.getInputStream();
+                            return new WebResourceResponse(null, null, is);
+                        } catch (Exception e) {
+                            Log.e("HTPP", "unable to query " + queryUrl + ": " + e);
+                            return null;
+                        }
+                    }
+                    else{
+                        try {
+                            InputStream is=getAssets().open(remain);
+                            return new WebResourceResponse(null,null,is);
+                        } catch (IOException e) {
+                            Log.e("HTTP","unable to load asset "+remain+": "+e);
+                            return null;
+                        }
                     }
                 }
                 else {
@@ -75,6 +83,22 @@ public class MainActivity extends AppCompatActivity {
         });
         mWebView.setWebChromeClient(new WebChromeClient());
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        mWebView.loadUrl("file:///android_asset/index.html");
+        //we fake some http url to allow xml http requests
+        mWebView.loadUrl(Constants.ASSETS+"/index.html");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.action_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent i=new Intent(this,StartActivity.class);
+        startActivity(i);
+        finish();
+        return true;
     }
 }
