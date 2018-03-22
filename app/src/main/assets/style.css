@@ -1,0 +1,32 @@
+.avn_gpsp_field_label {
+    padding-left: 8px;
+    border-bottom: 1px solid;
+    border-top: 1px solid;
+    background-color: #e2dfdf;
+    font-size: 0.5em;
+}
+.avn_gpsp_unit, .avn_gpsp_value {
+    padding-left: 4px;
+}
+.avn_gpsp_value {
+    display: inline-block;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+.avn_gpsp_vfield{
+    max-width: 10em;
+    margin: auto;
+    border: 2px solid black;
+    font-size: 3em;
+    overflow: hidden;
+}
+
+#errtext {
+color: red;
+margin-top: 2em;
+text-align: center;
+}
+
+* {
+    box-sizing: border-box;
+}

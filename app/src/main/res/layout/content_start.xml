@@ -13,11 +13,11 @@
         android:layout_width="512dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="61dp"
-        android:layout_marginLeft="61dp"
         android:layout_marginTop="64dp"
         android:ems="10"
         android:hint="URL"
         android:inputType="text"
+        android:text="http://www.wellenvogel.net/software/avnav/viewer/avnav_navi.php"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

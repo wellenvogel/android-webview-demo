@@ -4,7 +4,7 @@ var count=0;
 function fillData(text){
     var obj=JSON.parse(text);
     if (obj.lat && obj.lon){
-      item.innerText="lat="+obj.lat+", lon="+obj.lon;
+      item.innerText="lat="+obj.lat.toFixed(4)+", lon="+obj.lon.toFixed(4);
     }
 }
 function showError(etext){
