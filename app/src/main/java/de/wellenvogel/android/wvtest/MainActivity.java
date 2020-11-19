@@ -40,16 +40,12 @@ public class MainActivity extends AppCompatActivity {
         mWebView = (WebView) findViewById(R.id.webview);
         mWebView.getSettings().setJavaScriptEnabled(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && BuildConfig.DEBUG) {
-            try {
-                Method m=WebView.class.getDeclaredMethod("setWebContentsDebuggingEnabled",boolean.class);
-                m.setAccessible(true);
-                m.invoke(mWebView,true);
-            } catch (Exception e) {
-            }
+            WebView.setWebContentsDebuggingEnabled(true);
         }
         mWebView.getSettings().setDomStorageEnabled(true);
         mWebView.getSettings().setDatabaseEnabled(true);
         mWebView.getSettings().setAllowFileAccess(true);
+        mWebView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         mWebView.setWebViewClient(new WebViewClient(){
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
@@ -60,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                             URL cu = new URL(queryUrl);
                             URLConnection con = cu.openConnection();
                             InputStream is = con.getInputStream();
-                            return new WebResourceResponse(null, null, is);
+                            return new WebResourceResponse(con.getContentType(), con.getContentEncoding(), is);
                         } catch (Exception e) {
                             Log.e("HTTP", "unable to query " + queryUrl + ": " + e);
                             return new WebResourceResponse(null,null,404,e.getLocalizedMessage(),null,null);
@@ -69,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                     else{
                         try {
                             InputStream is=getAssets().open(remain);
-                            return new WebResourceResponse(null,null,is);
+                            return new WebResourceResponse(URLConnection.guessContentTypeFromName(remain),null,is);
                         } catch (IOException e) {
                             Log.e("HTTP","unable to load asset "+remain+": "+e);
                             return null;

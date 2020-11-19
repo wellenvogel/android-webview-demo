@@ -16,6 +16,10 @@
     <meta name="apple-mobile-web-app-title" content="avNav"/>
     <script type="text/javascript" src="test.js"></script>
     <script type="text/javascript">
+        var blob = new Blob(["crash renderer"]);
+        var url = URL.createObjectURL(blob);
+    </script>
+    <script type="text/javascript">
       try{
 
           if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
